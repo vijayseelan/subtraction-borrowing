@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>கடன் வாங்கி கழித்தல்</title>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <style>
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; }
+        .flex { display: flex; justify-content: space-between; }
+        .text-center { text-align: center; }
+        .mb-2 { margin-bottom: 10px; }
+        .text-4xl { font-size: 2.25rem; }
+        .relative { position: relative; }
+        .absolute { position: absolute; }
+        .text-red-500 { color: red; }
+        .text-lg { font-size: 1.125rem; }
+        .border-t-2 { border-top: 2px solid black; }
+        .h-16 { height: 4rem; }
+        .mt-4 { margin-top: 1rem; }
+        button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .bg-blue-500 { background-color: #3b82f6; color: white; }
+        .bg-green-500 { background-color: #22c55e; color: white; }
+        .w-full { width: 100%; }
+        .current-problem {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            padding: 10px;
+            border: 2px solid #3b82f6;
+            border-radius: 10px;
+            background-color: #f0f9ff;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const SubtractionWithBorrowing = () => {
+            const [step, setStep] = React.useState(0);
+            const [exampleIndex, setExampleIndex] = React.useState(0);
+            
+            const examples = [
+                { minuend: 52, subtrahend: 28 },
+                { minuend: 73, subtrahend: 45 },
+                { minuend: 91, subtrahend: 67 },
+                { minuend: 84, subtrahend: 39 },
+                { minuend: 60, subtrahend: 42 },
+                { minuend: 95, subtrahend: 68 },
+                { minuend: 80, subtrahend: 53 },
+                { minuend: 71, subtrahend: 38 },
+                { minuend: 63, subtrahend: 49 },
+                { minuend: 87, subtrahend: 59 },
+                { minuend: 100, subtrahend: 72 }
+            ];
+
+            const currentExample = examples[exampleIndex];
+
+            const getSteps = (minuend, subtrahend) => [
+                `${minuend}லிருந்து ${subtrahend}-ஐக் கழிப்போம்.`,
+                "முதலில் ஒன்றுகள் இடமதிப்பில் உள்ள எண்களைப் பார்ப்போம்.",
+                `${minuend % 10}லிருந்து ${subtrahend % 10}-ஐக் கழிக்க முடியாது. எனவே நாம் கடன் வாங்க வேண்டும்.`,
+                `பத்துகள் இடத்தில் உள்ள ${Math.floor(minuend / 10)}லிருந்து நாம் 1 பத்தைக் கடன் வாங்குகின்றோம். ${Math.floor(minuend / 10)} பத்தை ${Math.floor(minuend / 10) - 1} பத்தாக மாற்ற வேண்டும்.`,
+                `இப்போது ஒன்றுகள் இடமதிப்பில் நாம் கடன் வாங்கிய 10துடன் சேர்த்து ${minuend % 10 + 10} என்கிற எண் உள்ளது.`,
+                `${minuend % 10 + 10} கழித்தல் ${subtrahend % 10} சமம் ${minuend % 10 + 10 - subtrahend % 10} ஆகும்.`,
+                "இப்போது பத்து இடமதிப்பைப் பார்ப்போம்.",
+                `${Math.floor(minuend / 10) - 1} பத்து கழித்தல் ${Math.floor(subtrahend / 10)} பத்து என்பது உள்ளது.`,
+                `${Math.floor(minuend / 10) - 1} கழித்தல் ${Math.floor(subtrahend / 10)} சமம் ${Math.floor(minuend / 10) - 1 - Math.floor(subtrahend / 10)} ஆகும்.`,
+                `எனவே, ${minuend} கழித்தல் ${subtrahend} சமம் ${minuend - subtrahend} ஆகும்.`
+            ];
+
+            const steps = getSteps(currentExample.minuend, currentExample.subtrahend);
+
+            const nextStep = () => setStep(prev => Math.min(prev + 1, steps.length - 1));
+            const prevStep = () => setStep(prev => Math.max(prev - 1, 0));
+            const nextExample = () => {
+                setExampleIndex((prevIndex) => (prevIndex + 1) % examples.length);
+                setStep(0);
+            };
+
+            return (
+                <div className="container">
+                    <h2 className="text-center">கடன் வாங்கி கழித்தல்</h2>
+                    <div className="text-center">
+                        <div className="current-problem">
+                            {currentExample.minuend} - {currentExample.subtrahend} = {step === steps.length - 1 ? currentExample.minuend - currentExample.subtrahend : '?'}
+                        </div>
+                    </div>
+                    <div className="mb-2">
+                        <div className="flex mb-2">
+                            <div className="text-center" style={{width: '50%'}}>பத்துகள்</div>
+                            <div className="text-center" style={{width: '50%'}}>ஒன்றுகள்</div>
+                        </div>
+                        <div className="flex mb-2">
+                            <div className="text-center text-4xl" style={{width: '50%'}}>
+                                {step >= 3 ? Math.floor(currentExample.minuend / 10) - 1 : Math.floor(currentExample.minuend / 10)}
+                            </div>
+                            <div className="text-center text-4xl relative" style={{width: '50%'}}>
+                                {currentExample.minuend % 10}
+                                {step >= 3 && <span className="absolute text-red-500 text-lg" style={{top: 0, left: '30%'}}>1</span>}
+                            </div>
+                        </div>
+                        <div className="flex mb-2">
+                            <div className="text-center text-4xl" style={{width: '50%'}}>{Math.floor(currentExample.subtrahend / 10)}</div>
+                            <div className="text-center text-4xl" style={{width: '50%'}}>{currentExample.subtrahend % 10}</div>
+                        </div>
+                        <div className="border-t-2 mb-2"></div>
+                        <div className="flex">
+                            <div className="text-center text-4xl" style={{width: '50%'}}>
+                                {step >= 8 ? Math.floor(currentExample.minuend / 10) - 1 - Math.floor(currentExample.subtrahend / 10) : '_'}
+                            </div>
+                            <div className="text-center text-4xl" style={{width: '50%'}}>
+                                {step >= 5 ? currentExample.minuend % 10 + 10 - currentExample.subtrahend % 10 : '_'}
+                            </div>
+                        </div>
+                    </div>
+                    <p className="mb-2 h-16">{steps[step]}</p>
+                    <div className="flex mb-2">
+                        <button 
+                            onClick={prevStep} 
+                            className="bg-blue-500"
+                            disabled={step === 0}
+                        >
+                            முந்தைய
+                        </button>
+                        <button 
+                            onClick={nextStep} 
+                            className="bg-blue-500"
+                            disabled={step === steps.length - 1}
+                        >
+                            அடுத்து
+                        </button>
+                    </div>
+                    <div className="mt-4">
+                        <button 
+                            onClick={nextExample} 
+                            className="bg-green-500 w-full"
+                        >
+                            அடுத்த உதாரணம்
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<SubtractionWithBorrowing />, document.getElementById('root'));
+    </script>
+</body>
+</html>
